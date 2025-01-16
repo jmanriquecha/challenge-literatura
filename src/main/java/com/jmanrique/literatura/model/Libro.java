@@ -13,7 +13,10 @@ public class Libro {
     private String titulo;
     private List<String> idiomas;
     private Double numeroDeDesargas;
-    @OneToMany(mappedBy = "libro", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(name = "libro_autor", joinColumns = @JoinColumn(name = "libro_id", referencedColumnName = "id"),
+                inverseJoinColumns = @JoinColumn(name = "autor_id", referencedColumnName = "id")
+    )
     private List<Autor> autores;
 
     public Libro(){} // Por defecto
@@ -45,7 +48,6 @@ public class Libro {
     }
 
     public void setAutores(List<Autor> autores) {
-        autores.forEach(e -> e.setLibro(this));
         this.autores = autores;
     }
 

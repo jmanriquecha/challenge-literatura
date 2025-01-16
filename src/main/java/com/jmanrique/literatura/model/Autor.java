@@ -2,8 +2,8 @@ package com.jmanrique.literatura.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 @Entity
 @Table(name = "autores")
@@ -13,8 +13,8 @@ public class Autor {
     private Long id;
     private String nombre;
     private Integer anioNacido;
-    @ManyToOne()
-    private Libro libro;
+    @ManyToMany(mappedBy = "autores")
+    private List<Libro> libros;
 
     public Autor(){}
 
@@ -51,11 +51,11 @@ public class Autor {
         this.anioNacido = anioNacido;
     }
 
-    public Libro getLibro() {
-        return libro;
+    public List<Libro> getLibros() {
+        return libros;
     }
 
-    public void setLibro(Libro libro) {
-        this.libro = libro;
+    public void setLibros(List<Libro> libros) {
+        this.libros = libros;
     }
 }
