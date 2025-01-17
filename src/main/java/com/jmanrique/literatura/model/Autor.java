@@ -2,7 +2,6 @@ package com.jmanrique.literatura.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +16,7 @@ public class Autor {
     private String anioNacido;
     private String anioMuerte;
     @ManyToMany(mappedBy = "autores")
-    private List<Libro> libros = new ArrayList<>();
+    private Set<Libro> libros = new HashSet<>();
 
     public Autor(){}
 
@@ -59,11 +58,11 @@ public class Autor {
         this.anioMuerte = anioMuerte;
     }
 
-    public List<Libro> getLibros() {
+    public Set<Libro> getLibros() {
         return libros;
     }
 
-    public void setLibros(List<Libro> libros) {
+    public void setLibros(Set<Libro> libros) {
         this.libros = libros;
     }
 

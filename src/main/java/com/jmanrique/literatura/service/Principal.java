@@ -2,12 +2,11 @@ package com.jmanrique.literatura.service;
 
 import com.jmanrique.literatura.dto.DatosLibrosDTO;
 import com.jmanrique.literatura.model.*;
+import com.jmanrique.literatura.repository.AutorRepostitory;
 import com.jmanrique.literatura.repository.LibroRepository;
 import org.hibernate.LazyInitializationException;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -16,9 +15,11 @@ public class Principal {
     private final String URL_BASE = "https://gutendex.com/books/";
     private ConvierteDatos conversor = new ConvierteDatos();
     private LibroRepository repository;
+    private AutorRepostitory autorRepostitory;
 
-    public Principal(LibroRepository repository){
+    public Principal(LibroRepository repository, AutorRepostitory autorRepostitory){
         this.repository = repository;
+        this.autorRepostitory = autorRepostitory;
     }
 
     public void showMenu(){
@@ -102,22 +103,25 @@ public class Principal {
                         .toList();
 
                 //
-                List<Libro> autores = repository.findAll(); // Retorna autores de la db
+                List<Libro> buscarAutores = repository.findAll(); // Retorna autores de la db
                 Optional<Libro> autorBuscado = libros.stream()
                         .filter(l -> l.getAutores().stream()
                                 .anyMatch(autor -> autor.getNombre().toLowerCase().contains(nombreAutor.toLowerCase())))
                         .findFirst();
 
                 // Válida si el autor ya existe en la base de datos
+                Libro saveLibro = new Libro(buscarLibro);
                 if (autorBuscado.isPresent()){
-                    System.out.println("El autor ya esta registrado");
-                }else{
-                    Libro saveLibro = new Libro(buscarLibro);
-                    System.out.println("Guardando autor");
-                    saveLibro.setAutores(autoresApi); // Asigna los autores al libro
-                    repository.save(saveLibro); // Guarda el libro y la relación
-                    System.out.println("Se guardo libro con autor");
+                    // Autor existe
+                    Autor autor = autorRepostitory.findByNombre(nombreAutor);
+                    saveLibro.setAutores(new HashSet<>(Collections.singleton(autor)));
                     repository.save(saveLibro);
+                }else{
+                    // Autor no existe
+
+                    System.out.println("Guardando autor");
+                    saveLibro.setAutores(new HashSet<>(autoresApi)); // Asigna los autores al libro
+                    repository.save(saveLibro); // Guarda el libro y la relación
                 }
             }
         }else{

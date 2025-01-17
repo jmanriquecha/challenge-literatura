@@ -2,7 +2,6 @@ package com.jmanrique.literatura.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +20,7 @@ public class Libro {
     @JoinTable(name = "libro_autor", joinColumns = @JoinColumn(name = "libro_id", referencedColumnName = "id"),
                 inverseJoinColumns = @JoinColumn(name = "autor_id", referencedColumnName = "id")
     )
-    private List<Autor> autores = new ArrayList<>();
+    private Set<Autor> autores = new HashSet<>();
 
     public Libro(){} // Por defecto
 
@@ -47,11 +46,11 @@ public class Libro {
         this.titulo = titulo;
     }
 
-    public List<Autor> getAutores() {
+    public Set<Autor> getAutores() {
         return autores;
     }
 
-    public void setAutores(List<Autor> autores) {
+    public void setAutores(Set<Autor> autores) {
         this.autores = autores;
     }
 

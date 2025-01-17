@@ -1,5 +1,6 @@
 package com.jmanrique.literatura;
 
+import com.jmanrique.literatura.repository.AutorRepostitory;
 import com.jmanrique.literatura.repository.LibroRepository;
 import com.jmanrique.literatura.service.Principal;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -13,6 +14,9 @@ public class LiteraturaApplication implements CommandLineRunner {
 
 	@Autowired // Indica que debe hacer inyección de dependencia
 	private LibroRepository repository;
+
+	@Autowired
+	private AutorRepostitory autorRepostitory;
 
 	public static void main(String[] args) {
 		Dotenv dotenv = Dotenv.load();
@@ -28,7 +32,7 @@ public class LiteraturaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Principal principal = new Principal(repository);
+		Principal principal = new Principal(repository, autorRepostitory);
 		principal.showMenu();
 	}
 }
