@@ -1,7 +1,9 @@
 package com.jmanrique.literatura.service;
 
+import com.jmanrique.literatura.dto.DatosLibrosDTO;
 import com.jmanrique.literatura.model.*;
 import com.jmanrique.literatura.repository.LibroRepository;
+import org.hibernate.LazyInitializationException;
 
 import java.util.List;
 import java.util.Optional;
@@ -74,28 +76,74 @@ public class Principal {
 
     public void agregaLibrosYAutores(){
         var buscarLibro = getLibrosPorNombre();
+
+        // Valida que la API retorne información
         if(buscarLibro != null){
-            System.out.printf("El libro %s fue encontrado y agregado a la base de datos ", buscarLibro.titulo());
-            Libro libro = new Libro(buscarLibro);
-            repository.save(libro);
-            List<Autor> autores = buscarLibro.autor().stream()
-                    .map(a -> new Autor(a))
-                    .collect(Collectors.toList());
+            // Traemos todos los libros registrados en la base de datos
+            List<Libro> libros = repository.findAll();
 
-            // Agrega autor
-            libro.setAutores(autores);
-            repository.save(libro);
-            System.out.println("Autor se agrego correctamente");
+            // Compara si el libro buscado es igual al registrado en la base de datos
+            Optional<Libro> libro = libros.stream()
+                    .filter(l->l.getTitulo().toLowerCase()
+                            .contains(buscarLibro.titulo().toLowerCase()))
+                    .findFirst();
 
+            if(libro.isPresent()){
+                System.out.println("Libro ya esta registrado en la base de datos! ");
+            }else{
+
+                // Obtiene nombre del autor del libro buscado
+                var nombreAutor = buscarLibro.autores().stream().map(DatosAutor::nombre).findFirst().get();
+
+
+                // Obtener todos los autores de la api
+                List<Autor> autoresApi = buscarLibro.autores().stream()
+                        .map(Autor::new)
+                        .toList();
+
+                //
+                List<Libro> autores = repository.findAll(); // Retorna autores de la db
+                Optional<Libro> autorBuscado = libros.stream()
+                        .filter(l -> l.getAutores().stream()
+                                .anyMatch(autor -> autor.getNombre().toLowerCase().contains(nombreAutor.toLowerCase())))
+                        .findFirst();
+
+                // Válida si el autor ya existe en la base de datos
+                if (autorBuscado.isPresent()){
+                    System.out.println("El autor ya esta registrado");
+                }else{
+                    Libro saveLibro = new Libro(buscarLibro);
+                    System.out.println("Guardando autor");
+                    saveLibro.setAutores(autoresApi); // Asigna los autores al libro
+                    repository.save(saveLibro); // Guarda el libro y la relación
+                    System.out.println("Se guardo libro con autor");
+                    repository.save(saveLibro);
+                }
+            }
         }else{
-            System.out.println("El libro buscado no fue encontrado ó no existe!");
+            System.out.println("El libro no existe!");
         }
     }
 
     public void listarLibrosRegistrados(){
-        List<Libro> libros = repository.findAll();
 
-        libros.stream().forEach(System.out::println);
+        try{
+            List<Libro> libros = repository.findAll();
+
+            libros.stream().forEach(l ->
+                    System.out.println(
+                            "\n---LIBRO---"+
+                            "\nTitulo: "+ l.getTitulo()+
+                            "\nAutor: " + l.getAutores().stream()
+                                    .map(a-> new DatosAutor(a.getNombre(), a.getAnioNacido(), a.getAnioMuerte()))
+                                    .toList().stream().map(datos -> datos.nombre()).findFirst().get()+
+                            "\nIdioma " + l.getIdiomas()+
+                            "\nNúmero de descargas: " + l.getNumeroDeDesargas()));
+
+        }catch (LazyInitializationException e){
+            System.out.println(e);
+        }
+
     }
 
     public void salir(){

@@ -2,8 +2,10 @@ package com.jmanrique.literatura.model;
 
 import jakarta.persistence.*;
 
-import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "autores")
@@ -12,19 +14,17 @@ public class Autor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    private Integer anioNacido;
+    private String anioNacido;
+    private String anioMuerte;
     @ManyToMany(mappedBy = "autores")
-    private List<Libro> libros;
+    private List<Libro> libros = new ArrayList<>();
 
     public Autor(){}
 
     public Autor(DatosAutor autor){
         this.nombre = autor.nombre();
-        try{
-            this.anioNacido = Integer.parseInt(autor.anioNacido());
-        } catch (DateTimeParseException e){
-            this.anioNacido = 0;
-        }
+        this.anioNacido = autor.anioNacido();
+        this.anioMuerte = autor.anioMuerte();
     }
 
     public Long getId() {
@@ -43,12 +43,20 @@ public class Autor {
         this.nombre = nombre;
     }
 
-    public Integer getAnioNacido() {
+    public String getAnioNacido() {
         return anioNacido;
     }
 
-    public void setAnioNacido(Integer anioNacido) {
+    public void setAnioNacido(String anioNacido) {
         this.anioNacido = anioNacido;
+    }
+
+    public String getAnioMuerte() {
+        return anioMuerte;
+    }
+
+    public void setAnioMuerte(String anioMuerte) {
+        this.anioMuerte = anioMuerte;
     }
 
     public List<Libro> getLibros() {
@@ -57,5 +65,14 @@ public class Autor {
 
     public void setLibros(List<Libro> libros) {
         this.libros = libros;
+    }
+
+    @Override
+    public String toString() {
+        return "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", anioNacido='" + anioNacido + '\'' +
+                ", anioMuerte='" + anioMuerte + '\'' +
+                ", libros=" + libros;
     }
 }
