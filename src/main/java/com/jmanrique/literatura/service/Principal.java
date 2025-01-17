@@ -1,6 +1,5 @@
 package com.jmanrique.literatura.service;
 
-import com.jmanrique.literatura.dto.DatosLibrosDTO;
 import com.jmanrique.literatura.model.*;
 import com.jmanrique.literatura.repository.AutorRepostitory;
 import com.jmanrique.literatura.repository.LibroRepository;
@@ -28,6 +27,7 @@ public class Principal {
                 Elija una opción a través de su número:
                 \t1 - Buscar libro por titúlo
                 \t2 - Listar libros registrados
+                \t3 - Listar autores registrados
                 \t0 - Salir
                 """;
 
@@ -43,7 +43,7 @@ public class Principal {
                     listarLibrosRegistrados();
                     break;
                 case 3:
-                    System.out.println("Elegiste listar autores registrados");
+                    listarAutoresRegistrados();
                     break;
                 case 4:
                     System.out.println("Elegiste listar autores vivos en determinado año");
@@ -147,6 +147,21 @@ public class Principal {
         }catch (LazyInitializationException e){
             System.out.println(e);
         }
+
+    }
+
+    public void listarAutoresRegistrados(){
+        System.out.println("--- AUTORES ---");
+        List<Autor> autores = autorRepostitory.findAll();
+
+        autores.stream().forEach(a ->
+                System.out.println(
+                        "--- AUTOR ---" +
+                        "\nAutor: " + a.getNombre()+
+                        "\nAño nacimiento: " + a.getAnioNacido()+
+                        "\nAño fallecimiento: " + a.getAnioMuerte()
+                ));
+
 
     }
 

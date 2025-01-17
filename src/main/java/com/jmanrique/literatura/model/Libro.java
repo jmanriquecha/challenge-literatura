@@ -15,7 +15,7 @@ public class Libro {
     @Column(unique = true)
     private String titulo;
     private List<String> idiomas;
-    private Double numeroDeDescargas;
+    private String numeroDeDescargas;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "libro_autor", joinColumns = @JoinColumn(name = "libro_id", referencedColumnName = "id"),
                 inverseJoinColumns = @JoinColumn(name = "autor_id", referencedColumnName = "id")
@@ -62,11 +62,11 @@ public class Libro {
         this.idiomas = idiomas;
     }
 
-    public Double getNumeroDeDesargas() {
+    public String getNumeroDeDesargas() {
         return numeroDeDescargas;
     }
 
-    public void setNumeroDeDesargas(Double numeroDeDesargas) {
+    public void setNumeroDeDesargas(String numeroDeDesargas) {
         this.numeroDeDescargas = numeroDeDesargas;
     }
 
