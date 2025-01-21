@@ -6,7 +6,6 @@ import com.jmanrique.literatura.repository.LibroRepository;
 import org.hibernate.LazyInitializationException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Principal {
     private Scanner scanner = new Scanner(System.in);
@@ -46,7 +45,7 @@ public class Principal {
                     listarAutoresRegistrados();
                     break;
                 case 4:
-                    System.out.println("Elegiste listar autores vivos en determinado año");
+                    listarAutoresVivosEnDeterminadoAnio();
                     break;
                 case 5:
                     System.out.println("Elegiste listar libros por idioma");
@@ -163,6 +162,10 @@ public class Principal {
                 ));
 
 
+    }
+
+    public void  listarAutoresVivosEnDeterminadoAnio(){
+        System.out.println("Permite listar autores vivos en determinado año");
     }
 
     public void salir(){
